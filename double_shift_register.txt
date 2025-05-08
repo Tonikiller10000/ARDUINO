@@ -1,0 +1,45 @@
+Adress_Shift_Data 2
+Adress_Shift_Clk 3
+Adress_Shift_Latch 4
+Byte_Shift_Data 2
+Byte_Shift_Clk 3
+Byte_Shift_Latch 4
+bool InputEnable = false;
+
+void setAdress(int adress){
+
+shiftOut(Adress_Shift_Data,Adress_Shift_Clk,MSBFIRST,0xFF);//data pin;clock pin ; ??? data orientation???  ; 8bit data
+shiftOut(Adress_Shift_Data,Adress_Shift_Clk,MSBFIRST,0xFF); //double for 16 bit
+digitalWrite(Adress_Shift_Latch,LOW);
+digitalWrite(Adress_Shift_Latch,HIGH);
+digitalWrite(Adress_Shift_Latch,LOW);
+}
+
+void EEPROM_Write(int adress,int byte ){
+
+
+
+}
+
+
+
+
+void setup(){
+pinMode(Adress_Shift_Data,OUTPUT);
+pinMode(Adress_Shift_Clk,OUTPUT);
+pinMode(Adress_Shift_Latch,OUTPUT);
+pinMode(Shift_Data,OUTPUT);
+pinMode(Shift_Clk,OUTPUT);
+pinMode(Shift_Latch,OUTPUT);
+
+}
+
+
+void loop(){
+
+
+
+
+
+
+}
